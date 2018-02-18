@@ -7,8 +7,8 @@ import java.net.URL;
 
 public class HttpRequests {
 
-    public String makeRequest(String requestName, String url){
-        switch (requestName){
+    public String makeRequest(String requestName, String url) {
+        switch (requestName) {
             case "GET":
                 return sendGetRequest(url);
             case "POST":
@@ -20,11 +20,11 @@ public class HttpRequests {
         }
     }
 
-    private String sendGetRequest(String url){
+    private String sendGetRequest(String url) {
         HttpURLConnection connection = null;
         String response = "";
         try {
-            connection = (HttpURLConnection) new URL(url+"/get").openConnection();
+            connection = (HttpURLConnection) new URL(url + "/get").openConnection();
             connection.setRequestMethod("GET");
             //connection.setRequestProperty("User-Agent", "Mozilla/5.0");
             connection.setUseCaches(false);
@@ -32,74 +32,38 @@ public class HttpRequests {
             //connection.setReadTimeout(500);
 
             connection.connect();
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Response Code : " + connection.getResponseCode());
-
-            if(HttpURLConnection.HTTP_OK == connection.getResponseCode()){
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "cp1251"));
-
-                String line;
-                while ((line = in.readLine()) != null){
-                    stringBuilder.append(line);
-                    stringBuilder.append("\n");
-                }
-
-                response = stringBuilder.toString();
-            }
-            else{
-                response = "fail: "+ connection.getResponseCode() + ", " + connection.getResponseMessage();
-            }
-        }
-        catch (Throwable cause){
+            response = processingRequest(connection);
+        } catch (Throwable cause) {
             cause.printStackTrace();
-        }
-        finally {
-            if(connection != null){
+        } finally {
+            if (connection != null) {
                 connection.disconnect();
             }
         }
         return response;
     }
 
-    private String sendPostRequest(String url){
+    private String sendPostRequest(String url) {
         HttpURLConnection connection = null;
         String response = "";
         try {
-            connection = (HttpURLConnection) new URL(url+"/post").openConnection();
+            connection = (HttpURLConnection) new URL(url + "/post").openConnection();
             connection.setRequestMethod("POST");
             connection.setUseCaches(false);
 
             connection.connect();
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Response Code : " + connection.getResponseCode());
-
-            if(HttpURLConnection.HTTP_OK == connection.getResponseCode()){
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "cp1251"));
-
-                String line;
-                while ((line = in.readLine()) != null){
-                    stringBuilder.append(line);
-                    stringBuilder.append("\n");
-                }
-
-                response = stringBuilder.toString();
-            }
-            else{
-                response = "fail: "+ connection.getResponseCode() + ", " + connection.getResponseMessage();
-            }
-        }
-        catch (Throwable cause){
+            response = processingRequest(connection);
+        } catch (Throwable cause) {
             cause.printStackTrace();
-        }
-        finally {
-            if(connection != null){
+        } finally {
+            if (connection != null) {
                 connection.disconnect();
             }
         }
         return response;
     }
 
-    private String sendHeadRequest(String url){
+    private String sendHeadRequest(String url) {
         HttpURLConnection connection = null;
         String response = "";
         try {
@@ -108,32 +72,41 @@ public class HttpRequests {
             connection.setUseCaches(false);
 
             connection.connect();
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Response Code : " + connection.getResponseCode());
-
-            if(HttpURLConnection.HTTP_OK == connection.getResponseCode()){
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "cp1251"));
-
-                String line;
-                while ((line = in.readLine()) != null){
-                    stringBuilder.append(line);
-                    stringBuilder.append("\n");
-                }
-
-                response = stringBuilder.toString();
-            }
-            else{
-                response = "fail: "+ connection.getResponseCode() + ", " + connection.getResponseMessage();
-            }
-        }
-        catch (Throwable cause){
+            response = processingRequest(connection);
+        } catch (Throwable cause) {
             cause.printStackTrace();
-        }
-        finally {
-            if(connection != null){
+        } finally {
+            if (connection != null) {
                 connection.disconnect();
             }
         }
         return response;
     }
+
+    private String processingRequest(HttpURLConnection connection) {
+        String response = "";
+
+        try {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Response Code : " + connection.getResponseCode());
+            if (HttpURLConnection.HTTP_OK == connection.getResponseCode()) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "cp1251"));
+
+                String line;
+                while ((line = in.readLine()) != null) {
+                    stringBuilder.append(line);
+                    stringBuilder.append("\n");
+                }
+
+                response = stringBuilder.toString();
+            } else {
+                response = "fail: " + connection.getResponseCode() + ", " + connection.getResponseMessage();
+            }
+        } catch (Throwable cause) {
+            cause.printStackTrace();
+        }
+
+        return response;
+    }
+
 }

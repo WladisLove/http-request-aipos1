@@ -45,7 +45,6 @@ public class ViewEntryPoint {
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox)e.getSource();
                 chosenType = (String)cb.getSelectedItem();
-                System.out.println(chosenType);
             }
         });
 
