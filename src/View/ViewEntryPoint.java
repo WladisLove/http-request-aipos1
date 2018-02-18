@@ -6,12 +6,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class ViewEntryPoint {
     private JFrame frame = new JFrame();
     public JTextArea textArea = new JTextArea(20,80);
     public ButtonGroup bg = new ButtonGroup();
     private HttpRequests httpRequests = new HttpRequests();
+    private String chosenType = "GET";
 
 
     public ViewEntryPoint(){
@@ -31,15 +36,16 @@ public class ViewEntryPoint {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                textArea.insert(httpRequests.sendGetRequest("http://4pda.ru"),0);
+                textArea.setText(null);
+                textArea.insert(httpRequests.makeRequest(chosenType,"https://httpbin.org"),0);
             }
         });
         combo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox)e.getSource();
-                String petName = (String)cb.getSelectedItem();
-                System.out.println(petName);
+                chosenType = (String)cb.getSelectedItem();
+                System.out.println(chosenType);
             }
         });
 
@@ -50,6 +56,38 @@ public class ViewEntryPoint {
         frame.add(contents, BorderLayout.CENTER);
 
     }
+
+    /*private void test(){
+        HttpURLConnection con = null;
+        String url = "https://requestb.in/sk96ilsk";
+        try {
+
+            con = (HttpURLConnection) new URL(url).openConnection();
+            // optional default is GET
+            con.setRequestMethod("GET");
+            //add request header
+            con.setRequestProperty("User-Agent", "Mozilla/5.0");
+            int responseCode = con.getResponseCode();
+            System.out.println("\nSending 'GET' request to URL : " + url);
+            System.out.println("Response Code : " + responseCode);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+            //print in String
+            System.out.println(response.toString());
+            //Read JSON response and print
+            System.out.println("result after Reading JSON Response");
+            System.out.println(response.toString());
+        }
+        catch (Throwable cause){
+            cause.printStackTrace();
+        }
+    }*/
 
     public JFrame getFrame(String name){
         frame.setName(name);
