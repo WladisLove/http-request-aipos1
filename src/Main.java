@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args){
 
         JFrame myWindow = new ViewEntryPoint().getFrame("HTTP request test");
-        myWindow.setSize(1000, 600);
+        myWindow.setSize(1600, 600);
         myWindow.setVisible(true);
         myWindow.setLocationRelativeTo(null);
 

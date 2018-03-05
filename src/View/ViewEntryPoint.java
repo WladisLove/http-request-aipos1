@@ -1,43 +1,58 @@
 package View;
 
-import Controller.HttpRequests;
+import Controller.HttpRequest;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class ViewEntryPoint {
     private JFrame frame = new JFrame();
-    public JTextArea textArea = new JTextArea(20,80);
-    public ButtonGroup bg = new ButtonGroup();
-    private HttpRequests httpRequests = new HttpRequests();
+    private JTextArea requestArea = new JTextArea(20,70);
+    private JTextArea responseArea = new JTextArea(20,70);
+    private HttpRequest httpRequest;
     private String chosenType = "GET";
+    private JTextField uriField = new JTextField("/", 15);
+    private JTextField hostField = new JTextField("swi-prolog.org", 15);
+    private JTextArea headersArea = new JTextArea(3,30);
+    private JTextArea bodyArea = new JTextArea(6,30);
 
 
     public ViewEntryPoint(){
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        textArea.setFont(new Font("Dialog", Font.PLAIN, 14));
-        textArea.setTabSize(10);
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
+        requestArea.setFont(new Font("Dialog", Font.PLAIN, 14));
+        requestArea.setTabSize(10);
+        requestArea.setLineWrap(true);
+        requestArea.setWrapStyleWord(true);
+
+        responseArea.setFont(new Font("Dialog", Font.PLAIN, 14));
+        responseArea.setTabSize(10);
+        responseArea.setLineWrap(true);
+        responseArea.setWrapStyleWord(true);
 
         JComboBox combo = new JComboBox(new String[] {"GET", "POST", "HEAD"});
         combo.setSelectedIndex(0);
         JPanel panel = new JPanel();
         JButton btn = new JButton("Go");
+
         panel.add(combo);
+        panel.add(new JLabel("URI: "));
+        panel.add(uriField);
         panel.add(btn);
 
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                textArea.setText(null);
-                textArea.insert(httpRequests.makeRequest(chosenType,"https://httpbin.org"),0);
+                httpRequest = new HttpRequest(chosenType,
+                        uriField.getText(),
+                        hostField.getText(),
+                        headersArea.getText(),
+                        bodyArea.getText());
+                requestArea.setText(null);
+                requestArea.insert(httpRequest.getRequest(),0);
+                responseArea.setText(null);
+                responseArea.insert(httpRequest.getResponse(),0);
             }
         });
         combo.addActionListener(new ActionListener() {
@@ -48,45 +63,39 @@ public class ViewEntryPoint {
             }
         });
 
+        Box box = Box.createHorizontalBox();
+        box.add(new JScrollPane(requestArea));
+        box.add(Box.createHorizontalStrut(10));
+        box.add(new JScrollPane(responseArea));
+
+
+        JPanel requestContent = new JPanel();
+        Box settingBox = Box.createVerticalBox();
+        settingBox.add(new JLabel("Enter Headers:"));
+        Box box1 = Box.createVerticalBox();
+        box1.add(new JLabel("Host "));
+        box1.add(hostField);
+        settingBox.add(box1);
+        Box box2 = Box.createVerticalBox();
+        box2.add(new JLabel("Other Headers ( Param: value; ) "));
+        box2.add(headersArea);
+        settingBox.add(box2);
+
+        Box settingBox2 = Box.createVerticalBox();
+        settingBox2.add(new JLabel("Enter Body:"));
+        settingBox2.add(bodyArea);
+
+        requestContent.add(settingBox);
+        requestContent.add(settingBox2);
+
         JPanel contents = new JPanel();
-        contents.add(new JScrollPane(textArea));
-        
+        contents.add(box);
+
         frame.add(panel, BorderLayout.NORTH);
-        frame.add(contents, BorderLayout.CENTER);
+        frame.add(requestContent, BorderLayout.CENTER);
+        frame.add(contents, BorderLayout.SOUTH);
 
     }
-
-    /*private void test(){
-        HttpURLConnection con = null;
-        String url = "https://requestb.in/sk96ilsk";
-        try {
-
-            con = (HttpURLConnection) new URL(url).openConnection();
-            // optional default is GET
-            con.setRequestMethod("GET");
-            //add request header
-            con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            int responseCode = con.getResponseCode();
-            System.out.println("\nSending 'GET' request to URL : " + url);
-            System.out.println("Response Code : " + responseCode);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-            //print in String
-            System.out.println(response.toString());
-            //Read JSON response and print
-            System.out.println("result after Reading JSON Response");
-            System.out.println(response.toString());
-        }
-        catch (Throwable cause){
-            cause.printStackTrace();
-        }
-    }*/
 
     public JFrame getFrame(String name){
         frame.setName(name);
