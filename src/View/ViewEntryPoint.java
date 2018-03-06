@@ -14,8 +14,8 @@ public class ViewEntryPoint {
     private HttpRequest httpRequest;
     private String chosenType = "GET";
     private JTextField uriField = new JTextField("/", 15);
-    private JTextField hostField = new JTextField("swi-prolog.org", 15);
-    private JTextArea headersArea = new JTextArea(3,30);
+    private JTextField hostField = new JTextField("ttable.bspu.by", 15);
+    private JTextArea headersArea = new JTextArea("Connection: close",3,30);
     private JTextArea bodyArea = new JTextArea(6,30);
 
 

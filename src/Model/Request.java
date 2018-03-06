@@ -26,7 +26,6 @@ public class Request {
         return method +" "+ uri +" "+ protocol + "\n" +
                 "Host: " + host + "\n" +
                 headersLine +
-                "Connection: close\n" +
                 "\n" +
                 body;
     }
